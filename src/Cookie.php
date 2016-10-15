@@ -21,7 +21,7 @@ namespace Pop\Cookie;
  * @author     Nick Sagona, III <dev@nolainteractive.com>
  * @copyright  Copyright (c) 2009-2016 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    3.0.0
+ * @version    3.1.0
  */
 class Cookie implements \ArrayAccess
 {
@@ -74,7 +74,6 @@ class Cookie implements \ArrayAccess
      * Private method to instantiate the cookie object
      *
      * @param  array $options
-     * @return Cookie
      */
     private function __construct(array $options = [])
     {
@@ -108,6 +107,8 @@ class Cookie implements \ArrayAccess
         if (isset($options['httponly'])) {
             $this->httponly = (bool)$options['httponly'];
         }
+
+        return $this;
     }
 
     /**
