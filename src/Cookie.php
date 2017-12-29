@@ -273,7 +273,7 @@ class Cookie implements \ArrayAccess
     {
         $value = null;
         if (isset($_COOKIE[$name])) {
-            $value = (substr($_COOKIE[$name], 0, 1) == '{') ? json_decode($_COOKIE[$name]) : $_COOKIE[$name];
+            $value = (substr($_COOKIE[$name], 0, 1) == '{') ? json_decode($_COOKIE[$name], true) : $_COOKIE[$name];
         }
         return $value;
     }
