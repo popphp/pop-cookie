@@ -1,6 +1,9 @@
 pop-cookie
 ==========
 
+[![Build Status](https://travis-ci.org/popphp/pop-cookie.svg?branch=master)](https://travis-ci.org/popphp/pop-cookie)
+[![Coverage Status](http://cc.popphp.org/coverage.php?comp=pop-cookie)](http://cc.popphp.org/pop-cookie/)
+
 OVERVIEW
 --------
 `pop-cookie` is a component used to manage and manipulate cookies in the PHP web environment.
