@@ -38,7 +38,14 @@ namespace Pop\Cookie\Test {
             $this->assertEquals('127.0.0.1', $cookie->getIp());
             $this->assertFalse($cookie->isSecure());
             $this->assertFalse($cookie->isHttpOnly());
+            $this->assertEquals(2, $cookie->count());
+            $this->assertEquals(2, count($cookie->toArray()));
 
+            $i = 0;
+            foreach ($cookie as $c) {
+                $i++;
+            }
+            $this->assertEquals(2, $i);
             $this->assertTrue(isset($cookie['foo']));
             $this->assertEquals('bar', $cookie['foo']);
 
