@@ -20,11 +20,12 @@ namespace Pop\Cookie\Test {
             $_SERVER['HTTP_HOST']    = 'localhost';
             $_SERVER['SERVER_NAME'] = 'localhost';
             $cookie = Cookie::getInstance([
-                'expire'   => 3600,
+                'expires'  => 3600,
                 'path'     => '/',
                 'domain'   => 'localhost',
                 'secure'   => false,
-                'httponly' => false
+                'httponly' => false,
+                'samesite' => 'Strict'
             ]);
             $cookie->foo    = 'bar';
             $cookie['baz']  = 123;
@@ -32,10 +33,11 @@ namespace Pop\Cookie\Test {
             $_COOKIE['baz'] = 123;
 
             $this->assertEquals('bar', $_COOKIE['foo']);
-            $this->assertEquals(3600, $cookie->getExpire());
+            $this->assertEquals(3600, $cookie->getExpires());
             $this->assertEquals('/', $cookie->getPath());
             $this->assertEquals('localhost', $cookie->getDomain());
             $this->assertEquals('127.0.0.1', $cookie->getIp());
+            $this->assertEquals('Strict', $cookie->getSamesite());
             $this->assertFalse($cookie->isSecure());
             $this->assertFalse($cookie->isHttpOnly());
             $this->assertEquals(2, $cookie->count());
@@ -61,7 +63,7 @@ namespace Pop\Cookie\Test {
             $_SERVER['HTTP_HOST']    = 'localhost';
             $_SERVER['SERVER_NAME'] = 'localhost';
             $cookie = Cookie::getInstance([
-                'expire'   => 3600,
+                'expires'  => 3600,
                 'path'     => '/',
                 'domain'   => 'localhost',
                 'secure'   => false,
@@ -80,7 +82,7 @@ namespace Pop\Cookie\Test {
             $_SERVER['HTTP_HOST']    = 'localhost';
             $_SERVER['SERVER_NAME'] = 'localhost';
             $cookie = Cookie::getInstance([
-                'expire'   => 3600,
+                'expires'  => 3600,
                 'path'     => '/',
                 'domain'   => 'localhost',
                 'secure'   => false,
@@ -108,7 +110,7 @@ namespace Pop\Cookie\Test {
             $_SERVER['HTTP_HOST']    = 'localhost';
             $_SERVER['SERVER_NAME'] = 'localhost';
             $cookie = Cookie::getInstance([
-                'expire'   => 3600,
+                'expires'  => 3600,
                 'path'     => '/',
                 'domain'   => 'localhost',
                 'secure'   => false,
@@ -119,7 +121,7 @@ namespace Pop\Cookie\Test {
             $_COOKIE['json'] = json_encode($json);
             $this->assertEquals('{"test":123}', $_COOKIE['json']);
             $cookie->clear([
-                'expire'   => 3600,
+                'expires'  => 3600,
                 'path'     => '/',
                 'domain'   => 'localhost',
                 'secure'   => false,

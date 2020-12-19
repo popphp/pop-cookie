@@ -42,7 +42,7 @@ class Cookie implements \ArrayAccess, \Countable, \IteratorAggregate
      * Cookie Expiration
      * @var int
      */
-    private $expire = 0;
+    private $expires = 0;
 
     /**
      * Cookie Path
@@ -69,6 +69,12 @@ class Cookie implements \ArrayAccess, \Countable, \IteratorAggregate
     private $httponly = false;
 
     /**
+     * Cookie SameSite Flag (None, Lax, Strict)
+     * @var boolean
+     */
+    private $samesite = 'Lax';
+
+    /**
      * Constructor
      *
      * Private method to instantiate the cookie object
@@ -78,6 +84,23 @@ class Cookie implements \ArrayAccess, \Countable, \IteratorAggregate
     private function __construct(array $options = [])
     {
         $this->setOptions($options);
+    }
+
+    /**
+     * Method to create options array
+     *
+     * @return array
+     */
+    public function getOptions()
+    {
+        return [
+            'expires'  => $this->expires,
+            'path'     => $this->path,
+            'domain'   => $this->domain,
+            'secure'   => $this->secure,
+            'httponly' => $this->httponly,
+            'samesite' => $this->samesite
+        ];
     }
 
     /**
@@ -92,8 +115,8 @@ class Cookie implements \ArrayAccess, \Countable, \IteratorAggregate
         $this->ip     = $_SERVER['REMOTE_ADDR'];
         $this->domain = (isset($_SERVER['SERVER_NAME']) ? $_SERVER['SERVER_NAME'] : $_SERVER['HTTP_HOST']);
 
-        if (isset($options['expire'])) {
-            $this->expire = (int)$options['expire'];
+        if (isset($options['expires'])) {
+            $this->expires = (int)$options['expires'];
         }
         if (isset($options['path'])) {
             $this->path = $options['path'];
@@ -106,6 +129,12 @@ class Cookie implements \ArrayAccess, \Countable, \IteratorAggregate
         }
         if (isset($options['httponly'])) {
             $this->httponly = (bool)$options['httponly'];
+        }
+        if (isset($options['samesite'])) {
+            if (($options['samesite'] == 'None') || ($options['samesite'] == 'Lax') || ($options['samesite'] == 'Strict')) {
+                $this->samesite = $options['samesite'];
+            }
+
         }
 
         return $this;
@@ -145,7 +174,7 @@ class Cookie implements \ArrayAccess, \Countable, \IteratorAggregate
             $value = json_encode($value);
         }
 
-        setcookie($name, $value, $this->expire, $this->path, $this->domain, $this->secure, $this->httponly);
+        setcookie($name, $value, $this->getOptions());
         return $this;
     }
 
@@ -154,9 +183,9 @@ class Cookie implements \ArrayAccess, \Countable, \IteratorAggregate
      *
      * @return int
      */
-    public function getExpire()
+    public function getExpires()
     {
-        return $this->expire;
+        return $this->expires;
     }
 
     /**
@@ -200,6 +229,16 @@ class Cookie implements \ArrayAccess, \Countable, \IteratorAggregate
     }
 
     /**
+     * Return if the cookie's samesite flag
+     *
+     * @return string
+     */
+    public function getSamesite()
+    {
+        return $this->samesite;
+    }
+
+    /**
      * Return the current IP address.
      *
      * @return string
@@ -222,7 +261,8 @@ class Cookie implements \ArrayAccess, \Countable, \IteratorAggregate
             $this->setOptions($options);
         }
         if (isset($_COOKIE[$name])) {
-            setcookie($name, $_COOKIE[$name], (time() - 3600), $this->path, $this->domain, $this->secure, $this->httponly);
+            $this->expires = time() - 3600;
+            setcookie($name, $_COOKIE[$name], $this->getOptions());
         }
     }
 
@@ -237,9 +277,12 @@ class Cookie implements \ArrayAccess, \Countable, \IteratorAggregate
         if (null !== $options) {
             $this->setOptions($options);
         }
+
+        $this->expires = time() - 3600;
+
         foreach ($_COOKIE as $name => $value) {
             if (isset($_COOKIE[$name])) {
-                setcookie($name, $_COOKIE[$name], (time() - 3600), $this->path, $this->domain, $this->secure, $this->httponly);
+                setcookie($name, $_COOKIE[$name], $this->getOptions());
             }
         }
     }
@@ -282,7 +325,7 @@ class Cookie implements \ArrayAccess, \Countable, \IteratorAggregate
     public function __set($name, $value)
     {
         $options = [
-            'expire'   => $this->expire,
+            'expires'  => $this->expires,
             'path'     => $this->path,
             'domain'   => $this->domain,
             'secure'   => $this->secure,
@@ -326,7 +369,8 @@ class Cookie implements \ArrayAccess, \Countable, \IteratorAggregate
     public function __unset($name)
     {
         if (isset($_COOKIE[$name])) {
-            setcookie($name, $_COOKIE[$name], (time() - 3600), $this->path, $this->domain, $this->secure, $this->httponly);
+            $this->expires = time() - 3600;
+            setcookie($name, $_COOKIE[$name], $this->getOptions());
         }
     }
 
