@@ -1,7 +1,7 @@
 pop-cookie
 ==========
 
-[![Build Status](https://travis-ci.org/popphp/pop-cookie.svg?branch=master)](https://travis-ci.org/popphp/pop-cookie)
+[![Build Status](https://github.com/popphp/pop-cookie/workflows/phpunit/badge.svg)](https://github.com/popphp/pop-cookie/actions)
 [![Coverage Status](http://cc.popphp.org/coverage.php?comp=pop-cookie)](http://cc.popphp.org/pop-cookie/)
 
 OVERVIEW
