@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
  */
 
@@ -13,7 +13,7 @@
  */
 namespace Pop\Cookie;
 
-use ReturnTypeWillChange;
+use ArrayIterator;
 
 /**
  * Cookie class
@@ -21,9 +21,9 @@ use ReturnTypeWillChange;
  * @category   Pop
  * @package    Pop\Cookie
  * @author     Nick Sagona, III <dev@nolainteractive.com>
- * @copyright  Copyright (c) 2009-2023 NOLA Interactive, LLC. (http://www.nolainteractive.com)
+ * @copyright  Copyright (c) 2009-2024 NOLA Interactive, LLC. (http://www.nolainteractive.com)
  * @license    http://www.popphp.org/license     New BSD License
- * @version    3.3.0
+ * @version    4.0.0
  */
 class Cookie implements \ArrayAccess, \Countable, \IteratorAggregate
 {
@@ -32,49 +32,49 @@ class Cookie implements \ArrayAccess, \Countable, \IteratorAggregate
      * Instance of the cookie object
      * @var Cookie
      */
-    static private $instance;
+    static private Cookie $instance;
 
     /**
      * Cookie IP
-     * @var string
+     * @var ?string
      */
-    private $ip = null;
+    private ?string $ip = null;
 
     /**
      * Cookie Expiration
      * @var int
      */
-    private $expires = 0;
+    private int $expires = 0;
 
     /**
      * Cookie Path
      * @var string
      */
-    private $path = '/';
+    private string $path = '/';
 
     /**
      * Cookie Domain
-     * @var string
+     * @var ?string
      */
-    private $domain = null;
+    private ?string $domain = null;
 
     /**
      * Cookie Secure Flag
-     * @var boolean
+     * @var bool
      */
-    private $secure = false;
+    private bool $secure = false;
 
     /**
      * Cookie HTTP Only Flag
-     * @var boolean
+     * @var bool
      */
-    private $httponly = false;
+    private bool $httponly = false;
 
     /**
      * Cookie SameSite Flag (None, Lax, Strict)
-     * @var boolean
+     * @var string
      */
-    private $samesite = 'Lax';
+    private string $samesite = 'Lax';
 
     /**
      * Constructor
@@ -93,7 +93,7 @@ class Cookie implements \ArrayAccess, \Countable, \IteratorAggregate
      *
      * @return array
      */
-    public function getOptions()
+    public function getOptions(): array
     {
         return [
             'expires'  => $this->expires,
@@ -111,11 +111,11 @@ class Cookie implements \ArrayAccess, \Countable, \IteratorAggregate
      * @param  array $options
      * @return Cookie
      */
-    public function setOptions(array $options = [])
+    public function setOptions(array $options = []): Cookie
     {
         // Set the cookie owner's IP address and domain.
         $this->ip     = $_SERVER['REMOTE_ADDR'];
-        $this->domain = (isset($_SERVER['SERVER_NAME']) ? $_SERVER['SERVER_NAME'] : $_SERVER['HTTP_HOST']);
+        $this->domain = $_SERVER['SERVER_NAME'] ?? $_SERVER['HTTP_HOST'];
 
         if (isset($options['expires'])) {
             $this->expires = (int)$options['expires'];
@@ -149,7 +149,7 @@ class Cookie implements \ArrayAccess, \Countable, \IteratorAggregate
      * @param  array $options
      * @return Cookie
      */
-    public static function getInstance(array $options = [])
+    public static function getInstance(array $options = []): Cookie
     {
         if (empty(self::$instance)) {
             self::$instance = new Cookie($options);
@@ -166,9 +166,9 @@ class Cookie implements \ArrayAccess, \Countable, \IteratorAggregate
      * @param  array   $options
      * @return Cookie
      */
-    public function set($name, $value, array $options = null)
+    public function set(string $name, mixed $value, array $options = []): Cookie
     {
-        if (null !== $options) {
+        if (!empty($options)) {
             $this->setOptions($options);
         }
 
@@ -185,7 +185,7 @@ class Cookie implements \ArrayAccess, \Countable, \IteratorAggregate
      *
      * @return int
      */
-    public function getExpires()
+    public function getExpires(): int
     {
         return $this->expires;
     }
@@ -195,7 +195,7 @@ class Cookie implements \ArrayAccess, \Countable, \IteratorAggregate
      *
      * @return string
      */
-    public function getPath()
+    public function getPath(): string
     {
         return $this->path;
     }
@@ -203,9 +203,9 @@ class Cookie implements \ArrayAccess, \Countable, \IteratorAggregate
     /**
      * Return the current cookie domain
      *
-     * @return string
+     * @return string|null
      */
-    public function getDomain()
+    public function getDomain(): string|null
     {
         return $this->domain;
     }
@@ -213,9 +213,9 @@ class Cookie implements \ArrayAccess, \Countable, \IteratorAggregate
     /**
      * Return if the cookie is secure
      *
-     * @return boolean
+     * @return bool
      */
-    public function isSecure()
+    public function isSecure(): bool
     {
         return $this->secure;
     }
@@ -223,9 +223,9 @@ class Cookie implements \ArrayAccess, \Countable, \IteratorAggregate
     /**
      * Return if the cookie is HTTP only
      *
-     * @return boolean
+     * @return bool
      */
-    public function isHttpOnly()
+    public function isHttpOnly(): bool
     {
         return $this->httponly;
     }
@@ -235,7 +235,7 @@ class Cookie implements \ArrayAccess, \Countable, \IteratorAggregate
      *
      * @return string
      */
-    public function getSamesite()
+    public function getSamesite(): string
     {
         return $this->samesite;
     }
@@ -243,9 +243,9 @@ class Cookie implements \ArrayAccess, \Countable, \IteratorAggregate
     /**
      * Return the current IP address.
      *
-     * @return string
+     * @return string|null
      */
-    public function getIp()
+    public function getIp(): string|null
     {
         return $this->ip;
     }
@@ -257,9 +257,9 @@ class Cookie implements \ArrayAccess, \Countable, \IteratorAggregate
      * @param  array  $options
      * @return void
      */
-    public function delete($name, array $options = null)
+    public function delete(string $name, array $options = []): void
     {
-        if (null !== $options) {
+        if (!empty($options)) {
             $this->setOptions($options);
         }
         if (isset($_COOKIE[$name])) {
@@ -274,9 +274,9 @@ class Cookie implements \ArrayAccess, \Countable, \IteratorAggregate
      * @param  array $options
      * @return void
      */
-    public function clear(array $options = null)
+    public function clear(array $options = []): void
     {
-        if (null !== $options) {
+        if (!empty($options)) {
             $this->setOptions($options);
         }
 
@@ -301,18 +301,18 @@ class Cookie implements \ArrayAccess, \Countable, \IteratorAggregate
     /**
      * Method to iterate over the cookie
      *
-     * @return \ArrayIterator
+     * @return ArrayIterator
      */
-    public function getIterator(): \ArrayIterator
+    public function getIterator(): ArrayIterator
     {
-        return new \ArrayIterator($this->toArray());
+        return new ArrayIterator($this->toArray());
     }
     /**
      * Get the cookie values as an array
      *
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         return $_COOKIE;
     }
@@ -324,7 +324,7 @@ class Cookie implements \ArrayAccess, \Countable, \IteratorAggregate
      * @param  mixed $value
      * @return void
      */
-    public function __set($name, $value)
+    public function __set(string $name, mixed $value)
     {
         $options = [
             'expires'  => $this->expires,
@@ -342,11 +342,11 @@ class Cookie implements \ArrayAccess, \Countable, \IteratorAggregate
      * @param  string $name
      * @return mixed
      */
-    public function __get($name)
+    public function __get(string $name): mixed
     {
         $value = null;
         if (isset($_COOKIE[$name])) {
-            $value = (substr($_COOKIE[$name], 0, 1) == '{') ? json_decode($_COOKIE[$name], true) : $_COOKIE[$name];
+            $value = (str_starts_with($_COOKIE[$name], '{')) ? json_decode($_COOKIE[$name], true) : $_COOKIE[$name];
         }
         return $value;
     }
@@ -355,9 +355,9 @@ class Cookie implements \ArrayAccess, \Countable, \IteratorAggregate
      * Return the isset value of the $_COOKIE global variable
      *
      * @param  string $name
-     * @return boolean
+     * @return bool
      */
-    public function __isset($name)
+    public function __isset(string $name): bool
     {
         return isset($_COOKIE[$name]);
     }
@@ -368,7 +368,7 @@ class Cookie implements \ArrayAccess, \Countable, \IteratorAggregate
      * @param  string $name
      * @return void
      */
-    public function __unset($name)
+    public function __unset(string $name): void
     {
         if (isset($_COOKIE[$name])) {
             $this->expires = time() - 3600;
@@ -383,8 +383,7 @@ class Cookie implements \ArrayAccess, \Countable, \IteratorAggregate
      * @param  mixed $value
      * @return void
      */
-    #[ReturnTypeWillChange]
-    public function offsetSet($offset, $value)
+    public function offsetSet(mixed $offset, mixed $value): void
     {
         $this->__set($offset, $value);
     }
@@ -395,8 +394,7 @@ class Cookie implements \ArrayAccess, \Countable, \IteratorAggregate
      * @param  mixed $offset
      * @return mixed
      */
-    #[ReturnTypeWillChange]
-    public function offsetGet($offset)
+    public function offsetGet(mixed $offset): mixed
     {
         return $this->__get($offset);
     }
@@ -405,9 +403,9 @@ class Cookie implements \ArrayAccess, \Countable, \IteratorAggregate
      * ArrayAccess offsetExists
      *
      * @param  mixed $offset
-     * @return boolean
+     * @return bool
      */
-    public function offsetExists($offset): bool
+    public function offsetExists(mixed $offset): bool
     {
         return $this->__isset($offset);
     }
@@ -418,8 +416,7 @@ class Cookie implements \ArrayAccess, \Countable, \IteratorAggregate
      * @param  mixed $offset
      * @return void
      */
-    #[ReturnTypeWillChange]
-    public function offsetUnset($offset)
+    public function offsetUnset(mixed $offset): void
     {
         $this->__unset($offset);
     }

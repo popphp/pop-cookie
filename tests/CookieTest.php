@@ -10,7 +10,7 @@ namespace Pop\Cookie\Test {
     use Pop\Cookie\Cookie;
     use PHPUnit\Framework\TestCase;
 
-    class CssTest extends TestCase
+    class CookieTest extends TestCase
     {
 
         public function testCookie()
