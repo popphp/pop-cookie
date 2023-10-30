@@ -50,7 +50,7 @@ $cookie = Cookie::getInstance([
 ]);
 ```
 
-Available options to set include:
+### Available options
 
 ```php
 $options = [
@@ -65,7 +65,7 @@ $options = [
 
 From there, you can interact with the cookie object.
 
-**Setting cookie values**
+### Setting cookie values
 
 ```php
 // Set cookie values
@@ -73,14 +73,14 @@ $cookie->foo = 'bar';
 $cookie['baz'] = 123;
 ```
 
-**Accessing cookie values**
+### Accessing cookie values
 
 ```php
 echo $cookie->foo;
 echo $cookie['baz'];
 ```
 
-**Unset cookie values**
+### Unset cookie values
 
 ```php
 unset($cookie->foo);
