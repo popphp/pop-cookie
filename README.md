@@ -4,13 +4,22 @@ pop-cookie
 [![Build Status](https://github.com/popphp/pop-cookie/workflows/phpunit/badge.svg)](https://github.com/popphp/pop-cookie/actions)
 [![Coverage Status](http://cc.popphp.org/coverage.php?comp=pop-cookie)](http://cc.popphp.org/pop-cookie/)
 
-OVERVIEW
+[![Join the chat at https://popphp.slack.com](https://media.popphp.org/img/slack.svg)](https://popphp.slack.com)
+[![Join the chat at https://discord.gg/D9JBxPa5](https://media.popphp.org/img/discord.svg)](https://discord.gg/D9JBxPa5)
+
+* [Overview](#overview)
+* [Install](#install)
+* [Quickstart](#quickstart)
+
+Overview
 --------
-`pop-cookie` is a component used to manage and manipulate cookies in the PHP web environment.
+`pop-cookie` is a component used to create and manage cookies in the PHP web environment.
 
 `pop-cookie` is a component of the [Pop PHP Framework](http://www.popphp.org/).
 
-INSTALL
+[Top](#pop-cookie)
+
+Install
 -------
 
 Install `pop-cookie` using Composer.
@@ -23,26 +32,57 @@ Or, require it in your composer.json file
         "popphp/pop-cookie" : "^4.0.0"
     }
 
-BASIC USAGE
------------
+[Top](#pop-cookie)
+
+Quickstart
+----------
+
+The cookie object can be created using the `getInstance()` method, which takes an options array:
 
 ```php
 use Pop\Cookie\Cookie;
 
 $cookie = Cookie::getInstance([
     'path'   => '/',
-    'expire' => time() + 3600
+    'expire' => time() + 3600,
 ]);
+```
 
+Available options to set include:
+
+```php
+$options = [
+    'path'     => '/',
+    'expire'   => time() + 3600,
+    'domain'   => 'www.domain.com',
+    'secure'   => true,
+    'httponly' => true,
+    'samesite' => 'Lax'  // 'Lax', 'Strict', 'None'
+];
+```
+
+From there, you can interact with the cookie object.
+
+**Setting cookie values**
+
+```php
 // Set cookie values
 $cookie->foo = 'bar';
 $cookie['baz'] = 123;
+```
 
-// Access cookie values
+**Accessing cookie values**
+
+```php
 echo $cookie->foo;
 echo $cookie['baz'];
+```
 
-// Unset cookie values
+**Unset cookie values**
+
+```php
 unset($cookie->foo);
 unset($cookie['baz']);
 ```
+
+[Top](#pop-cookie)

@@ -89,6 +89,22 @@ class Cookie implements \ArrayAccess, \Countable, \IteratorAggregate
     }
 
     /**
+     * Determine whether or not an instance of the cookie object exists
+     * already, and instantiate the object if it does not exist.
+     *
+     * @param  array $options
+     * @return Cookie
+     */
+    public static function getInstance(array $options = []): Cookie
+    {
+        if (empty(self::$instance)) {
+            self::$instance = new Cookie($options);
+        }
+
+        return self::$instance;
+    }
+
+    /**
      * Method to create options array
      *
      * @return array
@@ -136,26 +152,9 @@ class Cookie implements \ArrayAccess, \Countable, \IteratorAggregate
             if (($options['samesite'] == 'None') || ($options['samesite'] == 'Lax') || ($options['samesite'] == 'Strict')) {
                 $this->samesite = $options['samesite'];
             }
-
         }
 
         return $this;
-    }
-
-    /**
-     * Determine whether or not an instance of the cookie object exists
-     * already, and instantiate the object if it does not exist.
-     *
-     * @param  array $options
-     * @return Cookie
-     */
-    public static function getInstance(array $options = []): Cookie
-    {
-        if (empty(self::$instance)) {
-            self::$instance = new Cookie($options);
-        }
-
-        return self::$instance;
     }
 
     /**
