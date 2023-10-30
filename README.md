@@ -13,7 +13,9 @@ pop-cookie
 
 Overview
 --------
-`pop-cookie` is a component used to create and manage cookies in the PHP web environment.
+`pop-cookie` is a component used to securely create and manage cookies in a PHP web environment.
+With it, you can set and retrieve cookie values, as well as set required configuration options
+for the web application environment.
 
 `pop-cookie` is a component of the [Pop PHP Framework](http://www.popphp.org/).
 
