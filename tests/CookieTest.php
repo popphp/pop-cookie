@@ -17,7 +17,7 @@ namespace Pop\Cookie\Test {
         {
             $_COOKIE = [];
             $_SERVER['REMOTE_ADDR'] = '127.0.0.1';
-            $_SERVER['HTTP_HOST']    = 'localhost';
+            $_SERVER['HTTP_HOST']   = 'localhost';
             $_SERVER['SERVER_NAME'] = 'localhost';
             $cookie = Cookie::getInstance([
                 'expires'  => 3600,
@@ -80,7 +80,7 @@ namespace Pop\Cookie\Test {
             $_COOKIE = [];
             $_SERVER['REMOTE_ADDR'] = '127.0.0.1';
             $_SERVER['HTTP_HOST']    = 'localhost';
-            $_SERVER['SERVER_NAME'] = 'localhost';
+            unset($_SERVER['SERVER_NAME']);
             $cookie = Cookie::getInstance([
                 'expires'  => 3600,
                 'path'     => '/',

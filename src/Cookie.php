@@ -130,8 +130,13 @@ class Cookie implements \ArrayAccess, \Countable, \IteratorAggregate
     public function setOptions(array $options = []): Cookie
     {
         // Set the cookie owner's IP address and domain.
-        $this->ip     = $_SERVER['REMOTE_ADDR'];
-        $this->domain = $_SERVER['SERVER_NAME'] ?? $_SERVER['HTTP_HOST'];
+        $this->ip = $_SERVER['REMOTE_ADDR'] ?? null;
+
+        if (isset($_SERVER['SERVER_NAME'])) {
+            $this->domain = $_SERVER['SERVER_NAME'];
+        } else if (isset($_SERVER['HTTP_HOST'])) {
+            $this->domain = $_SERVER['HTTP_HOST'];
+        }
 
         if (isset($options['expires'])) {
             $this->expires = (int)$options['expires'];
