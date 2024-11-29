@@ -87,3 +87,4 @@ unset($cookie['baz']);
 ```
 
 [Top](#pop-cookie)
+
