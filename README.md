@@ -30,7 +30,7 @@ Install `pop-cookie` using Composer.
 Or, require it in your composer.json file
 
     "require": {
-        "popphp/pop-cookie" : "^4.0.3"
+        "popphp/pop-cookie" : "^4.0.4"
     }
 
 [Top](#pop-cookie)
