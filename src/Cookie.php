@@ -4,7 +4,7 @@
  *
  * @link       https://github.com/popphp/popphp-framework
  * @author     Nick Sagona, III <dev@noladev.com>
- * @copyright  Copyright (c) 2009-2026 NOLA Interactive, LLC.
+ * @copyright  Copyright (c) 2009-2027 NOLA Interactive, LLC.
  * @license    https://www.popphp.org/license     New BSD License
  */
 
@@ -21,9 +21,9 @@ use ArrayIterator;
  * @category   Pop
  * @package    Pop\Cookie
  * @author     Nick Sagona, III <dev@noladev.com>
- * @copyright  Copyright (c) 2009-2026 NOLA Interactive, LLC.
+ * @copyright  Copyright (c) 2009-2027 NOLA Interactive, LLC.
  * @license    https://www.popphp.org/license     New BSD License
- * @version    4.0.4
+ * @version    4.1.0
  */
 class Cookie implements \ArrayAccess, \Countable, \IteratorAggregate
 {
@@ -99,6 +99,8 @@ class Cookie implements \ArrayAccess, \Countable, \IteratorAggregate
     {
         if (empty(self::$instance)) {
             self::$instance = new Cookie($options);
+        } else if (!empty($options)) {
+            self::$instance->setOptions($options);
         }
 
         return self::$instance;
@@ -125,6 +127,7 @@ class Cookie implements \ArrayAccess, \Countable, \IteratorAggregate
      * Private method to set options
      *
      * @param  array $options
+     * @throws Exception
      * @return Cookie
      */
     public function setOptions(array $options = []): Cookie
@@ -138,26 +141,31 @@ class Cookie implements \ArrayAccess, \Countable, \IteratorAggregate
             $this->domain = $_SERVER['HTTP_HOST'];
         }
 
-        if (isset($options['expires'])) {
-            $this->expires = (int)$options['expires'];
-        }
-        if (isset($options['path'])) {
-            $this->path = $options['path'];
-        }
-        if (isset($options['domain'])) {
-            $this->domain = $options['domain'];
-        }
-        if (isset($options['secure'])) {
-            $this->secure = (bool)$options['secure'];
-        }
-        if (isset($options['httponly'])) {
-            $this->httponly = (bool)$options['httponly'];
-        }
+        $expires  = isset($options['expires']) ? (int)$options['expires'] : $this->expires;
+        $path     = $options['path'] ?? $this->path;
+        $domain   = $options['domain'] ?? $this->domain;
+        $secure   = isset($options['secure']) ? (bool)$options['secure'] : $this->secure;
+        $httponly = isset($options['httponly']) ? (bool)$options['httponly'] : $this->httponly;
+        $samesite = $this->samesite;
+
         if (isset($options['samesite'])) {
-            if (($options['samesite'] == 'None') || ($options['samesite'] == 'Lax') || ($options['samesite'] == 'Strict')) {
-                $this->samesite = $options['samesite'];
+            if (($options['samesite'] != 'None') && ($options['samesite'] != 'Lax') && ($options['samesite'] != 'Strict')) {
+                throw new Exception("Error: The 'samesite' option must be 'None', 'Lax' or 'Strict'.");
             }
+            $samesite = $options['samesite'];
         }
+
+        if (($samesite == 'None') && ($secure === false)) {
+            throw new Exception("Error: A 'samesite' value of 'None' requires the 'secure' option to be set to true.");
+        }
+
+        // Only commit the new state once every option above has validated successfully.
+        $this->expires  = $expires;
+        $this->path     = $path;
+        $this->domain   = $domain;
+        $this->secure   = $secure;
+        $this->httponly = $httponly;
+        $this->samesite = $samesite;
 
         return $this;
     }
@@ -168,6 +176,7 @@ class Cookie implements \ArrayAccess, \Countable, \IteratorAggregate
      * @param  string  $name
      * @param  mixed   $value
      * @param  array   $options
+     * @throws Exception
      * @return Cookie
      */
     public function set(string $name, mixed $value, array $options = []): Cookie
@@ -180,7 +189,10 @@ class Cookie implements \ArrayAccess, \Countable, \IteratorAggregate
             $value = json_encode($value);
         }
 
-        setcookie($name, $value, $this->getOptions());
+        if (setcookie($name, $value, $this->getOptions()) === false) {
+            throw new Exception("Error: Unable to set the cookie '" . $name . "'.");
+        }
+
         return $this;
     }
 
@@ -259,6 +271,7 @@ class Cookie implements \ArrayAccess, \Countable, \IteratorAggregate
      *
      * @param  string $name
      * @param  array  $options
+     * @throws Exception
      * @return void
      */
     public function delete(string $name, array $options = []): void
@@ -268,7 +281,9 @@ class Cookie implements \ArrayAccess, \Countable, \IteratorAggregate
         }
         if (isset($_COOKIE[$name])) {
             $this->expires = time() - 3600;
-            setcookie($name, $_COOKIE[$name], $this->getOptions());
+            if (setcookie($name, $_COOKIE[$name], $this->getOptions()) === false) {
+                throw new Exception("Error: Unable to delete the cookie '" . $name . "'.");
+            }
         }
     }
 
@@ -276,6 +291,7 @@ class Cookie implements \ArrayAccess, \Countable, \IteratorAggregate
      * Clear (delete) all cookies
      *
      * @param  array $options
+     * @throws Exception
      * @return void
      */
     public function clear(array $options = []): void
@@ -288,7 +304,9 @@ class Cookie implements \ArrayAccess, \Countable, \IteratorAggregate
 
         foreach ($_COOKIE as $name => $value) {
             if (isset($_COOKIE[$name])) {
-                setcookie($name, $_COOKIE[$name], $this->getOptions());
+                if (setcookie($name, $_COOKIE[$name], $this->getOptions()) === false) {
+                    throw new Exception("Error: Unable to clear the cookie '" . $name . "'.");
+                }
             }
         }
     }
@@ -350,7 +368,9 @@ class Cookie implements \ArrayAccess, \Countable, \IteratorAggregate
     {
         $value = null;
         if (isset($_COOKIE[$name])) {
-            $value = (str_starts_with($_COOKIE[$name], '{')) ? json_decode($_COOKIE[$name], true) : $_COOKIE[$name];
+            $raw   = $_COOKIE[$name];
+            $value = (str_starts_with($raw, '{') || str_starts_with($raw, '[') || in_array($raw, ['true', 'false', 'null'], true)) ?
+                json_decode($raw, true) : $raw;
         }
         return $value;
     }
@@ -370,13 +390,16 @@ class Cookie implements \ArrayAccess, \Countable, \IteratorAggregate
      * Unset the value in the $_COOKIE global variable
      *
      * @param  string $name
+     * @throws Exception
      * @return void
      */
     public function __unset(string $name): void
     {
         if (isset($_COOKIE[$name])) {
             $this->expires = time() - 3600;
-            setcookie($name, $_COOKIE[$name], $this->getOptions());
+            if (setcookie($name, $_COOKIE[$name], $this->getOptions()) === false) {
+                throw new Exception("Error: Unable to unset the cookie '" . $name . "'.");
+            }
         }
     }
 
