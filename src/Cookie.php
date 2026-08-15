@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Pop PHP Framework (https://www.popphp.org/)
  *
@@ -189,7 +190,7 @@ class Cookie implements \ArrayAccess, \Countable, \IteratorAggregate
             $value = json_encode($value);
         }
 
-        if (setcookie($name, $value, $this->getOptions()) === false) {
+        if (setcookie($name, (string)$value, $this->getOptions()) === false) {
             throw new Exception("Error: Unable to set the cookie '" . $name . "'.");
         }
 
@@ -281,7 +282,7 @@ class Cookie implements \ArrayAccess, \Countable, \IteratorAggregate
         }
         if (isset($_COOKIE[$name])) {
             $this->expires = time() - 3600;
-            if (setcookie($name, $_COOKIE[$name], $this->getOptions()) === false) {
+            if (setcookie($name, (string)$_COOKIE[$name], $this->getOptions()) === false) {
                 throw new Exception("Error: Unable to delete the cookie '" . $name . "'.");
             }
         }
@@ -304,7 +305,7 @@ class Cookie implements \ArrayAccess, \Countable, \IteratorAggregate
 
         foreach ($_COOKIE as $name => $value) {
             if (isset($_COOKIE[$name])) {
-                if (setcookie($name, $_COOKIE[$name], $this->getOptions()) === false) {
+                if (setcookie($name, (string)$_COOKIE[$name], $this->getOptions()) === false) {
                     throw new Exception("Error: Unable to clear the cookie '" . $name . "'.");
                 }
             }
@@ -397,7 +398,7 @@ class Cookie implements \ArrayAccess, \Countable, \IteratorAggregate
     {
         if (isset($_COOKIE[$name])) {
             $this->expires = time() - 3600;
-            if (setcookie($name, $_COOKIE[$name], $this->getOptions()) === false) {
+            if (setcookie($name, (string)$_COOKIE[$name], $this->getOptions()) === false) {
                 throw new Exception("Error: Unable to unset the cookie '" . $name . "'.");
             }
         }
