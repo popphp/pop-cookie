@@ -2,7 +2,7 @@ pop-cookie
 ==========
 
 [![Build Status](https://github.com/popphp/pop-cookie/workflows/phpunit/badge.svg)](https://github.com/popphp/pop-cookie/actions)
-[![Coverage Status](http://cc.popphp.org/coverage.php?comp=pop-cookie)](http://cc.popphp.org/pop-cookie/)
+[![Coverage Status](https://cc.popphp.org/coverage.php?comp=pop-cookie)](https://cc.popphp.org/pop-cookie/)
 
 [![Join the chat at https://discord.gg/TZjgT74U7E](https://media.popphp.org/img/discord.svg)](https://discord.gg/TZjgT74U7E)
 
